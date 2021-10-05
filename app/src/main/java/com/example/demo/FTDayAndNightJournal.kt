@@ -12,6 +12,8 @@ import androidx.core.content.res.ResourcesCompat
 import com.example.demo.generator.FTDiaryFormat
 import com.example.demo.generator.models.info.FTMonthInfo
 import com.example.demo.generator.models.info.FTYearFormatInfo
+import com.example.demo.generator.models.info.rects.FTDairyDayPageRect
+import com.example.demo.generator.models.info.rects.FTDairyYearPageRect
 import com.example.demo.utils.FTDairyTextPaints
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.PDPage
@@ -116,14 +118,15 @@ class FTDayAndNightJournal(
             pageTopPadding + calendarYearTextSize,
             FTDairyTextPaints.calendar_Year_Paint
         )
-       /* findBoxHeight(maxRows)
-        findBoxWidth(maxColumns, pageLeftPadding)*/
+        /* findBoxHeight(maxRows)
+         findBoxWidth(maxColumns, pageLeftPadding)*/
 
         var boxLeft: Float
         var boxTop = calendarTopManualSpace
         var boxRight: Float
         var boxBottom = boxTop + calendarBoxHeight
         var month_Of_Year = 0
+        val yearRectInfoList = FTDairyYearPageRect.yearRectInfo
         for (rows in 1..maxRows) {
             boxLeft = pageLeftPadding
             boxRight = pageLeftPadding + calendarBoxWidth
@@ -132,9 +135,11 @@ class FTDayAndNightJournal(
                 boxBottom = boxTop + calendarBoxHeight
             }
             for (columns in 1..maxColumns) {
+                var monthRectsList = FTDairyYearPageRect().monthRectInfo
+                var dayRectInfo = FTDairyYearPageRect().dayRectInfo
                 val monthName = months[month_Of_Year].monthTitle.uppercase()
                 var dateLeftSpace = boxLeft
-                var dateTopSpace = boxTop + calendarVerticalSpacing * 4
+                var dateTopSpace = boxTop + calendarVerticalSpacing * 3
 
                 val r = RectF(boxLeft, boxTop, boxRight, boxBottom)
                 canvas.drawRoundRect(r, 10f, 10f, FTDairyTextPaints.coloredBoxPaint)
@@ -145,7 +150,7 @@ class FTDayAndNightJournal(
                         dateTopSpace += dayTopMargin
                         dateLeftSpace = boxLeft
                     }
-                    val date =
+                    var date =
                         if (months[month_Of_Year].dayInfos[days].belongsToSameMonth) months[month_Of_Year].dayInfos[days].dayString else ""
                     val xPosition = dateLeftSpace + individualDayinCalendar / 2
                     canvas.drawText(
@@ -154,18 +159,40 @@ class FTDayAndNightJournal(
                         dateTopSpace,
                         FTDairyTextPaints.calendar_Days_Paint
                     )
+                    Log.e("#date : ", date)
+                    val dayRectLeft = xPosition - (individualDayinCalendar / 2)
+
+                    if (date.isNotEmpty()) {
+                        dayRectInfo = RectF(
+                            dayRectLeft,
+                            dateTopSpace - calendarDayTextSize,
+                            dayRectLeft + individualDayinCalendar - 5,
+                            dateTopSpace
+                        )
+                        monthRectsList.add(dayRectInfo)
+                    }
+
+                    canvas.drawRect(
+                        dayRectLeft,
+                        dateTopSpace - calendarDayTextSize,
+                        dayRectLeft + individualDayinCalendar - 5,
+                        dateTopSpace,
+                        FTDairyTextPaints.coloredDayRectBoxPaint
+                    )
+
                     dateLeftSpace += individualDayinCalendar
                 }
 
                 canvas.drawText(
                     monthName,
                     boxLeft + individualDayinCalendar / 2,
-                    boxTop + calendarVerticalSpacing * 2,
+                    boxTop + calendarVerticalSpacing,
                     FTDairyTextPaints.calendar_Month_Paint
                 )
                 boxLeft = boxRight + calendarHorizontalSpacing
                 boxRight += calendarBoxWidth + calendarHorizontalSpacing
                 month_Of_Year++
+                yearRectInfoList.add(monthRectsList)
             }
         }
         document.finishPage(thirdPage)
@@ -179,7 +206,7 @@ class FTDayAndNightJournal(
             RectF(0f, 0f, screenSize.width.toFloat(), screenSize.height.toFloat()),
             FTDairyTextPaints.background_Paint
         )
-        FTDairyTextPaints.introQuote_Paint.textSize = 25 * screenDensity
+        FTDairyTextPaints.introQuote_Paint.textSize = 29 * screenDensity
 
         val introQuoteBoxHeight = if (!isLandscape) {
             heightPercent * 29.91f
@@ -196,11 +223,11 @@ class FTDayAndNightJournal(
             introQuoteBoxHeight / 2,
             FTDairyTextPaints.introQuote_Paint
         )
-        FTDairyTextPaints.introAuthorText_Paint.textSize = 22 * screenDensity
+        FTDairyTextPaints.introAuthorText_Paint.textSize = 23 * screenDensity
         canvas.drawText(
             context.resources.getString(R.string.ftdairy_author_name),
             (screenSize.width / 2).toFloat(),
-            (22 * screenDensity + 15 + introQuoteBoxHeight / 2).toFloat(),
+            (24 * screenDensity + 30 + introQuoteBoxHeight / 2),
             FTDairyTextPaints.introAuthorText_Paint
         )
         var introPageHeight = introQuoteBoxHeight + 9.91f * heightPercent
@@ -297,12 +324,14 @@ class FTDayAndNightJournal(
 
     private fun createTemplate(months: List<FTMonthInfo>) {
         var pageNumber = 3
+        FTDairyDayPageRect.yearPageRect = Rect((27.25 * widthPercent).toInt() ,(pageTopPadding).toInt() ,(32.25 * widthPercent).toInt(),(pageTopPadding + dairyTextSize).toInt())
+        //27.25 * widthPercentage
         months.forEach { ftMonthInfo ->
             ftMonthInfo.dayInfos.forEach { ftDayInfo ->
                 if (ftDayInfo.belongsToSameMonth) {
-                    val dairyDate =
-                        ftMonthInfo.monthTitle + " " + ftDayInfo.dayString + ", " + ftMonthInfo.year
-                    templateDayAndNight(pageNumber, dairyDate)
+                    val dairyDate = ftMonthInfo.monthTitle + "  " + FTApp.getDayOfMonthSuffix(ftDayInfo.dayString.toInt())+ ", "
+                    val dairyYear = ""+ftMonthInfo.year
+                    templateDayAndNight(pageNumber, dairyDate,dairyYear)
                     pageNumber += 1
                 }
             }
@@ -310,8 +339,8 @@ class FTDayAndNightJournal(
 
     }
 
-    private fun templateDayAndNight(pageNumber: Int, date: String) {
-        var pixelBasedTextSize = 20 * screenDensity
+    private fun templateDayAndNight(pageNumber: Int, date: String,year :String) {
+        val pixelBasedTextSize = 23 * screenDensity
         val pageInfo =
             PdfDocument.PageInfo.Builder(screenSize.width, screenSize.height, pageNumber)
                 .create()
@@ -323,19 +352,24 @@ class FTDayAndNightJournal(
                     .toFloat()
             ), FTDairyTextPaints.background_Paint
         )
-        val paint = Paint()
-        paint.color = context.resources.getColor(R.color.text_color, context.theme)
-//        paint.textSize = dairyTextSize
-        paint.textSize = pixelBasedTextSize
-        paint.style = Paint.Style.FILL_AND_STROKE
-        paint.strokeWidth = .1f
+        val dayPaint = Paint()
+        dayPaint.color = context.resources.getColor(R.color.text_color, context.theme)
+        dayPaint.textSize = pixelBasedTextSize
+        dayPaint.style = Paint.Style.FILL_AND_STROKE
+        dayPaint.strokeWidth = .1f
+        dayPaint.typeface = ResourcesCompat.getFont(context,R.font.lora_regular)
 
-        canvas.drawText(
-            "Date : $date",
-            pageLeftPadding,
-            pageTopPadding + dairyTextSize,
-            paint
-        )
+        val yearPaint = Paint()
+        yearPaint.color = context.resources.getColor(R.color.day_text_color, context.theme)
+        yearPaint.textSize = pixelBasedTextSize
+        yearPaint.style = Paint.Style.FILL_AND_STROKE
+        yearPaint.strokeWidth = .1f
+        yearPaint.typeface = ResourcesCompat.getFont(context,R.font.lora_regular)
+
+        canvas.drawText("Date : $date", pageLeftPadding, pageTopPadding + dairyTextSize, dayPaint)
+        canvas.drawRect( FTDairyDayPageRect.yearPageRect,FTDairyTextPaints.coloredDayRectBoxPaint)
+        canvas.drawText(year,27.25f * widthPercent , pageTopPadding + dairyTextSize,yearPaint)
+
         val xPosition = (canvas.width / 2).toFloat()
         var yPosition = heightPercent * 12.08f
         drawCenterText(
@@ -422,12 +456,13 @@ class FTDayAndNightJournal(
         paint.textSize = 20 * screenDensity
         paint.color = Color.GRAY
         paint.style = Paint.Style.FILL
+        paint.typeface = ResourcesCompat.getFont(context,R.font.lora_italic)
         paint.getTextBounds(text, 0, text.length, rect)
         canvas.drawText(text, xPosition, yPosition, paint)
     }
 
     private fun drawMultiLineText(text: String, dy: Float, isBulletPoint: Boolean) {
-        val pointTextSize = 25 * screenDensity
+        val pointTextSize = (25 * screenDensity) + 5
         val textPaint = TextPaint().apply {
             letterSpacing = 0.025f
             textSize = pointTextSize
@@ -438,7 +473,7 @@ class FTDayAndNightJournal(
         val staticLayout = StaticLayout.Builder.obtain(
             text,
             0,
-            text.length - 1,
+            text.length,
             textPaint,
             textWidth.toInt()
         ).setLineSpacing(0f, 1.25f).build()
@@ -497,31 +532,64 @@ class FTDayAndNightJournal(
             screenSize.width - (2 * pageLeftPadding) - (columns - 1) * calendarHorizontalSpacing
         calendarBoxWidth = leftOverSpace / columns
         return calendarBoxWidth
-
     }
 
     private fun createPageHyperLinks() {
         val pdfFilePath: String = context.getFilesDir().toString() + "/" + "demo.pdf"
         val pdfFile = File(pdfFilePath)
-        val pdDoc: PDDocument = PDDocument.load(pdfFile)
+        val pdDocument: PDDocument = PDDocument.load(pdfFile)
         val pdPage = PDPage()
-        pdDoc.addPage(pdPage)
+        var pageIndex = 1
+        val yearPage = pdDocument.getPage(pageIndex)
 
-        var pager = pdDoc.getPage(0)
+        FTDairyYearPageRect.yearRectInfo.forEachIndexed { monthIndex, arrayList ->
+            arrayList.forEachIndexed { dayIndex, monthRect ->
+
+                pageIndex++
+                val page = pdDocument.getPage(pageIndex)
+                if (page != null) {
+                    linkDayPageToYear(page,yearPage)
+                    val link = PDAnnotationLink()
+                    val destination: PDPageDestination = PDPageFitWidthDestination()
+                    val action = PDActionGoTo()
+
+                    destination.page = page
+                    action.destination = destination
+                    link.action = action
+
+                    val pdRectangle = PDRectangle()
+                    pdRectangle.lowerLeftX = monthRect.left
+                    pdRectangle.lowerLeftY = page.mediaBox.height - monthRect.top
+                    pdRectangle.upperRightX = monthRect.right
+                    pdRectangle.upperRightY = page.mediaBox.height - monthRect.bottom
+
+                    link.rectangle = pdRectangle
+                    yearPage.getAnnotations().add(link)
+                }
+
+            }
+        }
+        pdDocument.save(pdfFile)
+        pdDocument.close()
+    }
+
+    private fun linkDayPageToYear(page: PDPage, yearPage: PDPage) {
         val link = PDAnnotationLink()
         val destination: PDPageDestination = PDPageFitWidthDestination()
         val action = PDActionGoTo()
 
-        destination.page = pdDoc.getPage(5)
+        destination.page = yearPage
         action.destination = destination
         link.action = action
-        link.page = pager
 
-        link.rectangle = PDRectangle((screenSize.width/2).toFloat(),(screenSize.height/2).toFloat())
-        pager.annotations.add(link)
-        //page.annotations.add(link)
-        pdDoc.save(pdfFile)
-        pdDoc.close()
+        val pdRectangle = PDRectangle()
+        pdRectangle.lowerLeftX = FTDairyDayPageRect.yearPageRect.left.toFloat()
+        pdRectangle.lowerLeftY = page.mediaBox.height - FTDairyDayPageRect.yearPageRect.top
+        pdRectangle.upperRightX = FTDairyDayPageRect.yearPageRect.right.toFloat()
+        pdRectangle.upperRightY = page.mediaBox.height - FTDairyDayPageRect.yearPageRect.bottom
+
+        link.rectangle = pdRectangle
+        page.getAnnotations().add(link)
 
     }
 }

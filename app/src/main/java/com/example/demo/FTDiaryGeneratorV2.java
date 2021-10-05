@@ -40,7 +40,7 @@ public class FTDiaryGeneratorV2 {
         startDate.set(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.getActualMinimum(Calendar.DAY_OF_MONTH));
         Calendar endDate = new GregorianCalendar(formatInfo.locale);
         endDate.setTime(formatInfo.endMonth);
-        endDate.set(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH)-3, endDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+        endDate.set(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH), endDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 
         this.monthlyFormatter.generate();
         this.weeklyFormatter.generate();

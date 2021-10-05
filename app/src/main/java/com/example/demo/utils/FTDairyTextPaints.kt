@@ -36,6 +36,10 @@ class FTDairyTextPaints {
             style = Paint.Style.FILL
             color = FTApp.getInstance().resources.getColor(R.color.box_background, FTApp.getInstance().theme)
         }
+        var coloredDayRectBoxPaint = Paint().apply {
+            style = Paint.Style.FILL
+            color = FTApp.getInstance().resources.getColor(R.color.red, FTApp.getInstance().theme)
+        }
         var calendar_Year_Paint = Paint().apply {
             isAntiAlias = true
             color = Color.GRAY

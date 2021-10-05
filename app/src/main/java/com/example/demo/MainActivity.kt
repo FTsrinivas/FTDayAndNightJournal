@@ -141,6 +141,7 @@ class MainActivity : AppCompatActivity() {
             var page = document.startPage(pageInfo)
             var canvas: Canvas = page.canvas
             var paint = Paint()
+
             paint.setColor(Color.GRAY)
             paint.style = Paint.Style.FILL_AND_STROKE
             paint.strokeWidth = .1f
