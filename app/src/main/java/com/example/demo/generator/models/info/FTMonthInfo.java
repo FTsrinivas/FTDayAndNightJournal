@@ -83,8 +83,8 @@ public class FTMonthInfo {
             dayInfo.belongsToSameMonth = !nextDate.getTime().before(startDayOfMonthCal.getTime())
                     && !nextDate.getTime().after(lastDayOfMonth.getTime())
                     && !nextDate.getTime().before(yearFormatInfo.startMonth)
-                    && !nextDate.getTime().after(yearFormatInfo.endMonth)
-                    && isDateInSameMonth(startDate, nextDate);
+                    && !nextDate.getTime().after(yearFormatInfo.endMonth);
+                  //  && isDateInSameMonth(startDate, nextDate);
             dayInfo.populateDateInfo(nextDate.getTime());
             this.dayInfos.add(dayInfo);
             nextDate.add(Calendar.DAY_OF_YEAR, 1);

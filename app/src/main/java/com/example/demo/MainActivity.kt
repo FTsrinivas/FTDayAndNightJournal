@@ -1,5 +1,6 @@
 package com.example.demo
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.pdf.PdfDocument
@@ -7,7 +8,6 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.example.demo.generator.FTDairyRenderFormat
 import com.example.demo.generator.models.info.*
 import com.example.demo.utils.DrawingTextTemplates
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
@@ -20,9 +20,25 @@ import com.tom_roush.pdfbox.pdmodel.interactive.documentnavigation.destination.P
 import com.tom_roush.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageFitWidthDestination
 import java.io.File
 import java.io.FileOutputStream
-import java.text.SimpleDateFormat
-import java.time.Year
 import java.util.*
+
+import android.content.res.Resources
+import com.dd.plist.NSArray
+import com.dd.plist.NSDictionary
+import com.dd.plist.PropertyListParser
+import com.example.demo.generator.models.QuoteItem
+import org.w3c.dom.Element
+import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlPullParserFactory
+import java.util.HashMap
+
+import org.w3c.dom.Node
+
+import org.w3c.dom.NodeList
+
+import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.collections.ArrayList
+
 
 private const val x_axis_Margin = 40f
 
@@ -42,6 +58,7 @@ class MainActivity : AppCompatActivity() {
     var boxHeight = 0f
 
 
+    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PDFBoxResourceLoader.init(getApplicationContext())
@@ -61,15 +78,33 @@ class MainActivity : AppCompatActivity() {
 
 //        templateDayAndNight()
 
+        var quotesList = ArrayList<QuoteItem>()
+        val res: Resources = this.getResources()
+        val istream = res.assets.open("quotes.plist")
+        var rootDict = PropertyListParser.parse(istream)
+        Log.d("##Size", "" + rootDict.toJavaObject())
+
+        (rootDict as NSArray).array.forEachIndexed { index, nsObject ->
+            val item = QuoteItem(
+                (nsObject as NSDictionary).get("Quote").toString(),
+                (nsObject as NSDictionary).get("Author").toString()
+            )
+            quotesList.add(item)
+        }
         val firstDayOfCurrentYear = Calendar.getInstance()
         firstDayOfCurrentYear[Calendar.DATE] = 1
         firstDayOfCurrentYear[Calendar.MONTH] = 0
+        firstDayOfCurrentYear[Calendar.HOUR_OF_DAY] = 1
+        firstDayOfCurrentYear[Calendar.MINUTE] = 1
+        firstDayOfCurrentYear[Calendar.SECOND] = 1
         val startDate = firstDayOfCurrentYear.time
 
         val lastDayOfCurrentYear = Calendar.getInstance()
         lastDayOfCurrentYear[Calendar.DATE] = 31
         lastDayOfCurrentYear[Calendar.MONTH] = 11
-
+        lastDayOfCurrentYear[Calendar.HOUR_OF_DAY] = 23
+        lastDayOfCurrentYear[Calendar.MINUTE] = 59
+        lastDayOfCurrentYear[Calendar.SECOND] = 58
         val lastDate = lastDayOfCurrentYear.time
 
         val yearFormatInfo =
@@ -77,6 +112,22 @@ class MainActivity : AppCompatActivity() {
         val dairyGenerator = FTDiaryGeneratorV2(this, null, yearFormatInfo)
         dairyGenerator.generate()
 
+    }
+
+    protected fun getNodeValue(tag: String?, element: Element): String {
+        val nodeList = element.getElementsByTagName(tag)
+        val node = nodeList.item(0)
+        if (node != null) {
+            if (node.hasChildNodes()) {
+                val child = node.firstChild
+                while (child != null) {
+                    if (child.nodeType == Node.TEXT_NODE) {
+                        return child.nodeValue
+                    }
+                }
+            }
+        }
+        return ""
     }
 
     fun createTomBoxPdf() {
@@ -208,14 +259,19 @@ class MainActivity : AppCompatActivity() {
             "The place to be happy is here. The time to be happy is now."
 
         )
-        DrawingTextTemplates.drawCenterText(xPosition = xPos.toFloat(), 145f, canvas, "-Robert G. Ingersoll")
+        DrawingTextTemplates.drawCenterText(
+            xPosition = xPos.toFloat(),
+            145f,
+            canvas,
+            "-Robert G. Ingersoll"
+        )
         mTop = 239f
         mBottom = 50f
-        dailyQuestionnaire( canvas, "My affirmations for the day")
-        dailyQuestionnaire( canvas, "Today I will accomplish")
-        dailyQuestionnaire( canvas, "I am thankful for")
-        dailyQuestionnaire( canvas, "Three things that made me happy today")
-        dailyQuestionnaire( canvas, "Today I learnt")
+        dailyQuestionnaire(canvas, "My affirmations for the day")
+        dailyQuestionnaire(canvas, "Today I will accomplish")
+        dailyQuestionnaire(canvas, "I am thankful for")
+        dailyQuestionnaire(canvas, "Three things that made me happy today")
+        dailyQuestionnaire(canvas, "Today I learnt")
         drawRectangles(canvas)
         document.finishPage(page)
         try {
@@ -232,7 +288,7 @@ class MainActivity : AppCompatActivity() {
         canvas: Canvas,
         question: String
 
-        ) {
+    ) {
         var paint = Paint()
         mTop += 36
         canvas.drawText(

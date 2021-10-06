@@ -48,7 +48,7 @@ class FTDairyTextPaints {
         var calendar_Month_Paint = Paint().apply {
             isAntiAlias = true
             color = Color.GRAY
-            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.montserrat_semibold)
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.montserrat_bold)
         }
         var calendar_WeekDays_Paint = Paint().apply {
             isAntiAlias = true

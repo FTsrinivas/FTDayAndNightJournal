@@ -135,14 +135,14 @@ class FTDayAndNightJournal(
                 boxBottom = boxTop + calendarBoxHeight
             }
             for (columns in 1..maxColumns) {
-                var monthRectsList = FTDairyYearPageRect().monthRectInfo
+                val monthRectsList = FTDairyYearPageRect().monthRectInfo
                 var dayRectInfo = FTDairyYearPageRect().dayRectInfo
                 val monthName = months[month_Of_Year].monthTitle.uppercase()
                 var dateLeftSpace = boxLeft
                 var dateTopSpace = boxTop + calendarVerticalSpacing * 3
-
                 val r = RectF(boxLeft, boxTop, boxRight, boxBottom)
                 canvas.drawRoundRect(r, 10f, 10f, FTDairyTextPaints.coloredBoxPaint)
+
                 //show Week Day Names
                 showWeekDays(months, month_Of_Year, boxLeft, dateTopSpace)
                 for (days in 0 until months[month_Of_Year].dayInfos.size) {
@@ -150,7 +150,7 @@ class FTDayAndNightJournal(
                         dateTopSpace += dayTopMargin
                         dateLeftSpace = boxLeft
                     }
-                    var date =
+                    val date =
                         if (months[month_Of_Year].dayInfos[days].belongsToSameMonth) months[month_Of_Year].dayInfos[days].dayString else ""
                     val xPosition = dateLeftSpace + individualDayinCalendar / 2
                     canvas.drawText(
@@ -159,7 +159,6 @@ class FTDayAndNightJournal(
                         dateTopSpace,
                         FTDairyTextPaints.calendar_Days_Paint
                     )
-                    Log.e("#date : ", date)
                     val dayRectLeft = xPosition - (individualDayinCalendar / 2)
 
                     if (date.isNotEmpty()) {
@@ -293,7 +292,7 @@ class FTDayAndNightJournal(
             findBoxWidth(maxColumns, pageTopPadding)
             findBoxHeight(maxRows)
             calendarDayTextSize = 10 * screenDensity
-            calendarMonthTextSize = 13 * screenDensity
+            calendarMonthTextSize = 15 * screenDensity
             calendarYearTextSize = 40 * screenDensity
             dayLeftMargin = widthPercent * 3f
             dayTopMargin = heightPercent * 1.94f
