@@ -1,6 +1,8 @@
 package com.example.demo
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.*
 import android.graphics.pdf.PdfDocument
@@ -23,26 +25,33 @@ import java.io.FileOutputStream
 import java.util.*
 
 import android.content.res.Resources
+import android.os.Build
+import androidx.core.app.ActivityCompat
+import androidx.databinding.DataBindingUtil
 import com.dd.plist.NSArray
 import com.dd.plist.NSDictionary
 import com.dd.plist.PropertyListParser
+import com.example.demo.databinding.ActivityMainBinding
 import com.example.demo.generator.models.QuoteItem
 import org.w3c.dom.Element
-import org.xmlpull.v1.XmlPullParser
-import org.xmlpull.v1.XmlPullParserFactory
-import java.util.HashMap
 
 import org.w3c.dom.Node
 
-import org.w3c.dom.NodeList
-
-import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.collections.ArrayList
+import android.content.pm.PackageManager
+import android.os.AsyncTask
+import android.os.Environment
+import android.view.View
+import android.widget.AdapterView
+import android.widget.Toast
+import com.example.demo.generator.models.ScreenResolutions
+import com.example.demo.generator.models.ScreenSizeAdapter
 
 
 private const val x_axis_Margin = 40f
+const val CREATE_FILE = 1
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     var screenHeight: Int = 0
     var screenWidth: Int = 0
 
@@ -56,11 +65,14 @@ class MainActivity : AppCompatActivity() {
     var horizontalSpacing = 0f
     var boxWidth = 0f
     var boxHeight = 0f
-
+    lateinit var binding: ActivityMainBinding
+    lateinit var spinnerList: ArrayList<ScreenResolutions>
+    lateinit var selectedItem: ScreenResolutions
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         PDFBoxResourceLoader.init(getApplicationContext())
         //To find the size of screen dynamically using display Metrics
         val displayMetrics = DisplayMetrics()
@@ -77,13 +89,13 @@ class MainActivity : AppCompatActivity() {
         boxHeight = (screenHeight / 100f) * 19.69f
 
 //        templateDayAndNight()
+        isStoragePermissionGranted()
+        setUpUI()
 
         var quotesList = ArrayList<QuoteItem>()
         val res: Resources = this.getResources()
         val istream = res.assets.open("quotes.plist")
         var rootDict = PropertyListParser.parse(istream)
-        Log.d("##Size", "" + rootDict.toJavaObject())
-
         (rootDict as NSArray).array.forEachIndexed { index, nsObject ->
             val item = QuoteItem(
                 (nsObject as NSDictionary).get("Quote").toString(),
@@ -91,27 +103,31 @@ class MainActivity : AppCompatActivity() {
             )
             quotesList.add(item)
         }
-        val firstDayOfCurrentYear = Calendar.getInstance()
-        firstDayOfCurrentYear[Calendar.DATE] = 1
-        firstDayOfCurrentYear[Calendar.MONTH] = 0
-        firstDayOfCurrentYear[Calendar.HOUR_OF_DAY] = 1
-        firstDayOfCurrentYear[Calendar.MINUTE] = 1
-        firstDayOfCurrentYear[Calendar.SECOND] = 1
-        val startDate = firstDayOfCurrentYear.time
 
-        val lastDayOfCurrentYear = Calendar.getInstance()
-        lastDayOfCurrentYear[Calendar.DATE] = 31
-        lastDayOfCurrentYear[Calendar.MONTH] = 11
-        lastDayOfCurrentYear[Calendar.HOUR_OF_DAY] = 23
-        lastDayOfCurrentYear[Calendar.MINUTE] = 59
-        lastDayOfCurrentYear[Calendar.SECOND] = 58
-        val lastDate = lastDayOfCurrentYear.time
+    }
 
-        val yearFormatInfo =
-            FTYearFormatInfo(startDate, lastDate)
-        val dairyGenerator = FTDiaryGeneratorV2(this, null, yearFormatInfo)
-        dairyGenerator.generate()
+    private fun setUpUI() {
+        spinnerList = ArrayList<ScreenResolutions>()
+        spinnerList.add(ScreenResolutions("Samsung Galaxy Tab S7 Plus", 2800, 1752, 12.4f))
+        spinnerList.add(ScreenResolutions("Lenovo Tab P11 Pro", 2560, 1600, 11.5f))
+        spinnerList.add(ScreenResolutions("Samsung Galaxy Tab S6", 2560, 1600, 10.5f))
+        spinnerList.add(ScreenResolutions("Huawei MatePad Pro", 2560, 1600, 10.8f))
+        spinnerList.add(ScreenResolutions("Samsung Galaxy Tab S6 Lite", 2000, 1200, 10.4f))
+        spinnerList.add(ScreenResolutions("Amazon Fire HD 10 (2019)", 1920, 1200, 10.10f))
+        spinnerList.add(ScreenResolutions("Amazon Fire HD 8 Plus", 1280, 800, 8.0f))
+        spinnerList.add(ScreenResolutions("Amazon Fire HD 8 (2020)", 1280, 800, 8.0f))
+        val adapter = ScreenSizeAdapter(this, R.layout.item_screen_sizes, spinnerList)
+        adapter.setDropDownViewResource(R.layout.item_screen_sizes)
+        binding.spinnerScreenSize.adapter = adapter
+        binding.spinnerScreenSize.onItemSelectedListener = this
 
+        binding.btnCreatePDF.setOnClickListener {
+            if (selectedItem == null)
+                selectedItem = spinnerList.get(0)
+
+            SaveFileInExternalStorage(this, selectedItem).execute()
+
+        }
     }
 
     protected fun getNodeValue(tag: String?, element: Element): String {
@@ -346,6 +362,112 @@ class MainActivity : AppCompatActivity() {
                 paint.setColor(Color.parseColor("#E1E9E8"));
                 canvas.drawRoundRect(r, 10f, 10f, paint);
             }
+        }
+    }
+
+
+    private fun isStoragePermissionGranted(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED
+            ) {
+                true
+            } else {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ),
+                    1
+                )
+                false
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            true
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            Log.v("##TAG", "Permission: " + permissions[0] + "was " + grantResults[0])
+            //resume tasks needing this permission
+        } else if (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED) {
+            isStoragePermissionGranted()
+        }
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        Toast.makeText(
+            applicationContext,
+            spinnerList[position].name,
+            Toast.LENGTH_LONG
+        )
+            .show()
+        selectedItem = spinnerList[position]
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+//        TODO("Not yet implemented")
+    }
+
+    class SaveFileInExternalStorage(context: Context, selectedItem: ScreenResolutions) :
+        AsyncTask<Void, Int, Long>() {
+        var dialog: ProgressDialog? = null
+        var context: Context? = null
+        var selectedItem: ScreenResolutions? = null
+
+        init {
+            this.context = context
+            this.selectedItem = selectedItem
+        }
+
+        override fun doInBackground(vararg params: Void?): Long {
+
+            var folder = File(Environment.getExternalStorageState())
+            val firstDayOfCurrentYear = Calendar.getInstance()
+            firstDayOfCurrentYear[Calendar.DATE] = 1
+            firstDayOfCurrentYear[Calendar.MONTH] = 0
+            firstDayOfCurrentYear[Calendar.HOUR_OF_DAY] = 1
+            firstDayOfCurrentYear[Calendar.MINUTE] = 1
+            firstDayOfCurrentYear[Calendar.SECOND] = 1
+            val startDate = firstDayOfCurrentYear.time
+
+            val lastDayOfCurrentYear = Calendar.getInstance()
+            lastDayOfCurrentYear[Calendar.DATE] = 31
+            lastDayOfCurrentYear[Calendar.MONTH] = 11
+            lastDayOfCurrentYear[Calendar.HOUR_OF_DAY] = 23
+            lastDayOfCurrentYear[Calendar.MINUTE] = 59
+            lastDayOfCurrentYear[Calendar.SECOND] = 58
+            val lastDate = lastDayOfCurrentYear.time
+
+            val yearFormatInfo =
+                FTYearFormatInfo(startDate, lastDate)
+            val dairyGenerator = FTDiaryGeneratorV2(context, null, yearFormatInfo)
+            dairyGenerator.generate(selectedItem)
+            return 0
+        }
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            dialog = ProgressDialog(context)
+            dialog?.setMessage("Creating PDF File..")
+            dialog?.setCancelable(false)
+            dialog?.show()
+
+        }
+
+        override fun onPostExecute(result: Long) {
+            super.onPostExecute(result)
+            // ...
+            dialog?.dismiss()
         }
     }
 }

@@ -29,6 +29,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -43,4 +46,7 @@ dependencies {
 
     implementation 'com.tom-roush:pdfbox-android:2.0.3.0'
     implementation 'com.googlecode.plist:dd-plist:1.23'
+
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+
 }
