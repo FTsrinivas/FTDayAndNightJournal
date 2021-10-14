@@ -86,8 +86,7 @@ class FTDayAndNightJournal(
         calendarYear: FTYearFormatInfo
     ) {
         super.renderYearPage(context, months, calendarYear)
-//        screenDensity = context.resources.displayMetrics.density
-        screenDensity =1.0f
+        screenDensity = context.resources.displayMetrics.density
 //        orientation = context.resources.configuration.orientation
         Log.d(
             "density:",
