@@ -86,9 +86,9 @@ class FTDayAndNightJournal(
         calendarYear: FTYearFormatInfo
     ) {
         super.renderYearPage(context, months, calendarYear)
-//        screenDensity = context.resources.displayMetrics.density
-        screenDensity =1.0f
-//        orientation = context.resources.configuration.orientation
+        screenDensity = context.resources.displayMetrics.density
+
+        orientation = context.resources.configuration.orientation
         Log.d(
             "density:",
             " - " + screenDensity + " && " + screenSize.width + " x " + screenSize.height
@@ -323,7 +323,7 @@ class FTDayAndNightJournal(
             findColumnCount()
             findMaxLines()
             lineGap = heightPercent * 2.91f
-            if (isLandScape /*|| orientation == Configuration.ORIENTATION_LANDSCAPE*/) {
+            if (isLandScape || orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 /* maxRows = 3
                  maxColumns = 4
                  maxLines = 2*/
