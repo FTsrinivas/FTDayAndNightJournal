@@ -171,7 +171,7 @@ class FTDayAndNightJournal(
         var boxRight: Float
         var boxBottom = boxTop + calendarBoxHeight
         var month_Of_Year = 0
-        val yearRectInfoList = FTDairyYearPageRect().yearRectInfo
+        val yearRectInfoList = FTDairyYearPageRect.yearRectInfo
         for (rows in 1..maxRows) {
             boxLeft = pageLeftPadding
             boxRight = pageLeftPadding + calendarBoxWidth
@@ -595,7 +595,7 @@ class FTDayAndNightJournal(
             var pageIndex = 1
             var yearPage = pdDocument.getPage(pageIndex)
 
-            FTDairyYearPageRect().yearRectInfo.forEachIndexed { monthIndex, arrayList ->
+            FTDairyYearPageRect.yearRectInfo.forEachIndexed { monthIndex, arrayList ->
                 arrayList.forEachIndexed { dayIndex, monthRect ->
 
                     pageIndex++

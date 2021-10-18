@@ -43,6 +43,7 @@ import android.os.AsyncTask
 import android.os.Environment
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.demo.generator.models.ScreenResolutions
 import com.example.demo.generator.models.ScreenSizeAdapter
@@ -67,7 +68,9 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     var boxHeight = 0f
     lateinit var binding: ActivityMainBinding
     lateinit var spinnerList: ArrayList<ScreenResolutions>
+    val densitySpinnerArray = arrayOf(0.75f, 1f, 1.25f, 1.5f, 2f, 2.25f, 2.5f)
     lateinit var selectedItem: ScreenResolutions
+    var screenDensity = 1f
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,6 +110,12 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     private fun setUpUI() {
+        var densityAdapter =
+            ArrayAdapter<Float>(this, android.R.layout.simple_spinner_item, densitySpinnerArray)
+        densityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerDensity.adapter = densityAdapter
+        binding.spinnerDensity.onItemSelectedListener = this
+
         spinnerList = ArrayList<ScreenResolutions>()
         spinnerList.add(ScreenResolutions("Samsung Galaxy Tab S7 Plus", 2800, 1752, 12.4f))
         spinnerList.add(ScreenResolutions("Lenovo Tab P11 Pro", 2560, 1600, 11.5f))
@@ -125,7 +134,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             if (selectedItem == null)
                 selectedItem = spinnerList.get(0)
 
-            SaveFileInExternalStorage(this, selectedItem).execute()
+            SaveFileInExternalStorage(this, selectedItem,screenDensity).execute()
 
         }
     }
@@ -405,28 +414,36 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        Toast.makeText(
-            applicationContext,
-            spinnerList[position].name,
-            Toast.LENGTH_LONG
-        )
-            .show()
-        selectedItem = spinnerList[position]
+        when (view?.id) {
+            R.id.spinnerScreenSize ->{
+                Toast.makeText(
+                    applicationContext,
+                    spinnerList[position].name,
+                    Toast.LENGTH_LONG
+                )
+                    .show()
+            selectedItem = spinnerList[position]
+            }
+            R.id.spinnerDensity ->{
+                screenDensity = densitySpinnerArray[position]
+            }
+        }
     }
-
     override fun onNothingSelected(parent: AdapterView<*>?) {
 //        TODO("Not yet implemented")
     }
 
-    class SaveFileInExternalStorage(context: Context, selectedItem: ScreenResolutions) :
+    class SaveFileInExternalStorage(context: Context, selectedItem: ScreenResolutions,screenDensity : Float) :
         AsyncTask<Void, Int, Long>() {
         var dialog: ProgressDialog? = null
         var context: Context? = null
         var selectedItem: ScreenResolutions? = null
+        var density  =1f
 
         init {
             this.context = context
             this.selectedItem = selectedItem
+            this.density = screenDensity
         }
 
         override fun doInBackground(vararg params: Void?): Long {

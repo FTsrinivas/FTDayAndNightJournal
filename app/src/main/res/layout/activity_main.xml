@@ -19,7 +19,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spinnerDensity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:drawableRight="@android:drawable/arrow_down_float"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerScreenSize" />
+
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCreatePDF"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_16sdp"
@@ -28,7 +40,6 @@
             android:text="create pdf"
             android:textColor="@color/white"
             android:textSize="@dimen/_16sdp"
-            android:id="@+id/btnCreatePDF"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerScreenSize" />
+            app:layout_constraintTop_toBottomOf="@+id/spinnerDensity" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

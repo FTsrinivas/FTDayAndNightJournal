@@ -35,7 +35,7 @@ public class FTDiaryGeneratorV2 {
         weeklyFormatter = new FTYearInfoWeekly(formatInfo);
     }
 
-    public String generate(ScreenResolutions resolutions) {
+    public String generate(ScreenResolutions resolutions,float density) {
         Calendar startDate = new GregorianCalendar(formatInfo.locale);
         startDate.setTime(formatInfo.startMonth);
         startDate.set(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.getActualMinimum(Calendar.DAY_OF_MONTH));
