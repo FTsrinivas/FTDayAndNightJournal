@@ -47,6 +47,7 @@ public class FTDiaryFormat implements FTDairyRenderFormat {
     protected Size pageSize;
 
     protected boolean isLandscape;
+    protected float screenDensity;
 //    var quoteProvider: FTQuotesProvider = FTQuotesProvider()
 
     public static FTDiaryFormat getFormat(Context context, FTYearFormatInfo info) {
@@ -67,6 +68,14 @@ public class FTDiaryFormat implements FTDairyRenderFormat {
         this.isLandscape = isLandscape;
     }
 
+    public FTDiaryFormat(Context context, Size screenSize, boolean isLandscape, float screenDensity) {
+        this.context = context;
+        this.pageSize = getPageSize(context, screenSize, isLandscape);
+        this.isLandscape = isLandscape;
+        this.screenDensity = screenDensity;
+
+    }
+
     protected PdfDocument.Page getPage(int at) {
         PdfDocument.PageInfo info = new PdfDocument.PageInfo.Builder(pageSize.getWidth(), pageSize.getHeight(), at).create();
         return document.startPage(info);
@@ -77,7 +86,7 @@ public class FTDiaryFormat implements FTDairyRenderFormat {
     }
 
     private Size getPageSize(Context context, Size screenSize, boolean isLandscape) {
-         float width = screenSize.getWidth();
+        float width = screenSize.getWidth();
         float height = screenSize.getHeight();
         boolean isTablet = DrawingTextTemplates.INSTANCE.isTablet(context);
         int statusBarHeight = getStatusBarHeight(context);

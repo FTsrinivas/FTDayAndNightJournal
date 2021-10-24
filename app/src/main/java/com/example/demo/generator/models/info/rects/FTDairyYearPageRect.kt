@@ -7,7 +7,6 @@ class FTDairyYearPageRect {
     var dayRectInfo = RectF()
     var monthRectInfo = ArrayList<RectF>()
     companion object RectFInfo{
-
-       val yearRectInfo : MutableList<ArrayList<RectF>> = ArrayList()
+       var yearRectInfo : MutableList<ArrayList<RectF>> = ArrayList()
     }
 }

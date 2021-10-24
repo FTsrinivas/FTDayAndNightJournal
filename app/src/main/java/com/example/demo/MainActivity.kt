@@ -414,7 +414,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        when (view?.id) {
+        when (parent?.id) {
             R.id.spinnerScreenSize ->{
                 Toast.makeText(
                     applicationContext,
@@ -468,7 +468,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             val yearFormatInfo =
                 FTYearFormatInfo(startDate, lastDate)
             val dairyGenerator = FTDiaryGeneratorV2(context, null, yearFormatInfo)
-            dairyGenerator.generate(selectedItem)
+            dairyGenerator.generate(selectedItem,density)
             return 0
         }
 
