@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     lateinit var spinnerList: ArrayList<ScreenResolutions>
     val densitySpinnerArray = arrayOf(0.75f, 1f, 1.25f, 1.5f, 2f, 2.25f, 2.5f)
     lateinit var selectedItem: ScreenResolutions
-    var screenDensity = 1f
+    var screenDensity = 0f
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         PDFBoxResourceLoader.init(getApplicationContext())
         //To find the size of screen dynamically using display Metrics
         val displayMetrics = DisplayMetrics()
+        screenDensity  = displayMetrics.density
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         //Screen Height and Width
         screenWidth = (displayMetrics.widthPixels)
@@ -129,6 +130,10 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         adapter.setDropDownViewResource(R.layout.item_screen_sizes)
         binding.spinnerScreenSize.adapter = adapter
         binding.spinnerScreenSize.onItemSelectedListener = this
+
+        selectedItem = spinnerList.get(0)
+        SaveFileInExternalStorage(this, selectedItem,screenDensity).execute()
+
 
         binding.btnCreatePDF.setOnClickListener {
             if (selectedItem == null)
@@ -468,7 +473,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             val yearFormatInfo =
                 FTYearFormatInfo(startDate, lastDate)
             val dairyGenerator = FTDiaryGeneratorV2(context, null, yearFormatInfo)
-            dairyGenerator.generate(selectedItem,density)
+            dairyGenerator.generate()
             return 0
         }
 
