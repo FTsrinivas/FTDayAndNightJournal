@@ -468,7 +468,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             val yearFormatInfo =
                 FTYearFormatInfo(startDate, lastDate)
             val dairyGenerator = FTDiaryGeneratorV2(context, null, yearFormatInfo)
-            dairyGenerator.generate(selectedItem)
+            dairyGenerator.generate(selectedItem,2.2f)
             return 0
         }
 
