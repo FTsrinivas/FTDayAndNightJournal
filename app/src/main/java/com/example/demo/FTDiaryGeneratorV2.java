@@ -56,7 +56,7 @@ public class FTDiaryGeneratorV2 {
 //        Size size = new Size(screenWidth,screenHeight);
         Size size = new Size(resolutions.getWidth(),resolutions.getHeight());
         try {
-            new FTDayAndNightJournal(context, size,true,density).renderYearPage(context, monthlyFormatter.monthInfos, formatInfo);
+            new FTDayAndNightJournal(context, size,false,density).renderYearPage(context, monthlyFormatter.monthInfos, formatInfo);
         } catch (IOException e) {
             e.printStackTrace();
         }

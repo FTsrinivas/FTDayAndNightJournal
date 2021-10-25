@@ -289,9 +289,9 @@ class FTDayAndNightJournal(
             calendarVerticalSpacing = heightPercent * 1.81f
             calendarHorizontalSpacing = widthPercent * 1.81f
             calendarTopManualSpace = heightPercent * 10.58f
-            ScreenUtils.findRowCount(isLandScape)
-            ScreenUtils.findColumnCount(isLandScape)
-            ScreenUtils.findMaxLines(isLandScape)
+           maxRows =  ScreenUtils.findRowCount(isLandScape)
+            maxColumns = ScreenUtils.findColumnCount(isLandScape)
+            maxLines = ScreenUtils.findMaxLines(isLandScape)
             templateDottedLineGap = heightPercent * 2.91f
             if (isLandScape /*|| orientation == Configuration.ORIENTATION_LANDSCAPE*/) {
                 /* maxRows = 3
@@ -337,12 +337,12 @@ class FTDayAndNightJournal(
 
     private fun createTemplate(months: List<FTMonthInfo>) {
         var pageNumber = 3
-        FTDairyDayPageRect.yearPageRect = Rect(
+        /*FTDairyDayPageRect.yearPageRect = Rect(
             (27.25 * widthPercent).toInt(),
             (pageTopPadding).toInt(),
             (32.25 * widthPercent).toInt(),
             (pageTopPadding + dairyTextSize).toInt()
-        )
+        )*/
         //27.25 * widthPercentage
         months.forEach { ftMonthInfo ->
             ftMonthInfo.dayInfos.forEach { ftDayInfo ->
@@ -397,8 +397,15 @@ class FTDayAndNightJournal(
         var mDate = "Date : $date,"
         dayPaint.getTextBounds(mDate, 0, mDate.length, rect)
 
+        FTDairyDayPageRect.yearPageRect = Rect(
+            (pageLeftPadding + rect.width()).toInt(),
+            (pageTopPadding).toInt(),
+            (32.25 * widthPercent).toInt(),
+            (pageTopPadding + dairyTextSize).toInt()
+        )
+
         canvas.drawText("Date : $date", pageLeftPadding, pageTopPadding + dairyTextSize, dayPaint)
-//        canvas.drawRect(FTDairyDayPageRect.yearPageRect, FTDairyTextPaints.coloredDayRectBoxPaint)
+        canvas.drawRect(FTDairyDayPageRect.yearPageRect, FTDairyTextPaints.coloredDayRectBoxPaint)
         canvas.drawText(
             year,
             pageLeftPadding + rect.width().toFloat(),
