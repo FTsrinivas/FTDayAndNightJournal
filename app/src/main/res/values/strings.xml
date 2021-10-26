@@ -1,16 +1,15 @@
 <resources>
-    <string name="app_name">Demo</string>
+    <string name="app_name">Day and Night Journal</string>
     <string name="ftdairy_quote">“Mindfulness, the Root of Happiness”</string>
     <string name="ftdairy_author_name">-Joseph Goldstein</string>
     <string name="ftdairy_title">Day and Night Journal</string>
     <string name="ftdairy_point_one">• A mindfulness journal that helps you set goals for the day and reflect on them.</string>
     <string name="ftdairy_point_two">• Write down your daily thoughts and affirmations in the morning.</string>
     <string name="ftdairy_point_three">• Reflect and ponder upon your achievements and express your gratitude at night.</string>
-    <string name="ftdairy_points">• A mindfulness journal that helps you set goals for the day and reflect on them. \n
-• Write down your daily thoughts and affirmations in the morning. \n
-• Reflect and ponder upon your achievements and express your gratitude at night.
+    <string name="ftdairy_points"> • A mindfulness journal that helps you set goals for the day and reflect on them. \n• Write down your daily thoughts and affirmations in the morning. \n• Reflect and ponder upon your achievements and express your gratitude at night.
 
 </string>
     <string name="ftdairy_static_para">This journal has a page for every day of the chosen timeline and a yearly calendar view for easy navigation. Make mindful journaling a daily habit to lead a happy and successful life.</string>
+    <string name="set_to_landscape_orientation">Set to Landscape Orientation</string>
 
 </resources>
