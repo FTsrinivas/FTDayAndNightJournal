@@ -35,7 +35,7 @@ public class FTDiaryGeneratorV2 {
         weeklyFormatter = new FTYearInfoWeekly(formatInfo);
     }
 
-    public String generate(ScreenResolutions resolutions,float density) {
+    public String generate(ScreenResolutions resolutions,boolean isLanScape) {
         Calendar startDate = new GregorianCalendar(formatInfo.locale);
         startDate.setTime(formatInfo.startMonth);
         startDate.set(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.getActualMinimum(Calendar.DAY_OF_MONTH));
@@ -56,7 +56,7 @@ public class FTDiaryGeneratorV2 {
 //        Size size = new Size(screenWidth,screenHeight);
         Size size = new Size(resolutions.getWidth(),resolutions.getHeight());
         try {
-            new FTDayAndNightJournal(context, size,false,density).renderYearPage(context, monthlyFormatter.monthInfos, formatInfo);
+            new FTDayAndNightJournal(context, size,isLanScape).renderYearPage(context, monthlyFormatter.monthInfos, formatInfo);
         } catch (IOException e) {
             e.printStackTrace();
         }

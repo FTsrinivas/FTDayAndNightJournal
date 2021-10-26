@@ -68,14 +68,6 @@ public class FTDiaryFormat implements FTDairyRenderFormat {
         this.isLandscape = isLandscape;
     }
 
-    public FTDiaryFormat(Context context, Size screenSize, boolean isLandscape, float screenDensity) {
-        this.context = context;
-        this.pageSize = getPageSize(context, screenSize, isLandscape);
-        this.isLandscape = isLandscape;
-        this.screenDensity = screenDensity;
-
-    }
-
     protected PdfDocument.Page getPage(int at) {
         PdfDocument.PageInfo info = new PdfDocument.PageInfo.Builder(pageSize.getWidth(), pageSize.getHeight(), at).create();
         return document.startPage(info);
