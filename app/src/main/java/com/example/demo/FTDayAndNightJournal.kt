@@ -39,6 +39,7 @@ import kotlin.collections.ArrayList
 
 import android.util.TypedValue
 import com.example.demo.utils.ScreenUtils
+import com.example.demo.utils.Utils
 
 
 class FTDayAndNightJournal(
@@ -136,7 +137,7 @@ class FTDayAndNightJournal(
         FTDairyTextPaints.calendar_WeekDays_Paint.textSize = calendarDayTextSize
         FTDairyTextPaints.calendar_Days_Paint.textSize = calendarDayTextSize
         canvas.drawText(
-            getYearHeading(calendarYear.startMonth),
+            Utils.getYearHeading(calendarYear.startMonth),
             pageLeftPadding,
             pageTopPadding + calendarYearTextSize,
             FTDairyTextPaints.calendar_Year_Paint
@@ -468,11 +469,7 @@ class FTDayAndNightJournal(
         document.finishPage(page)
     }
 
-    private fun getYearHeading(date: Date): String {
-        val calendar = Calendar.getInstance()
-        calendar.time = date
-        return "" + calendar[Calendar.YEAR]
-    }
+
 
     private fun dailyQuestionnaire(canvas: Canvas?, question: String) {
         FTDairyTextPaints.dairyText_Paint.textSize = 20 * screenDensity

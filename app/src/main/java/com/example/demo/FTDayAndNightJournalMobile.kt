@@ -17,6 +17,7 @@ import com.example.demo.generator.models.info.rects.FTDairyYearPageRect
 import com.example.demo.utils.FTDairyTextPaints
 import com.example.demo.utils.ScreenUtils
 import com.example.demo.utils.ScreenUtils.getQuotesList
+import com.example.demo.utils.Utils
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 
@@ -49,6 +50,9 @@ class FTDayAndNightJournalMobile(
     private var calendarTopManualSpace = 0f
     private var calendarBoxHeight = 0f
     private var calendarBoxWidth = 0f
+    private var calendarMonthTextTopMargins = 0f
+    private var calendarMonthTextLeftMargins = 0f
+
 
     private var calendarMonthTextSize = 0f
     private var calendarYearTextSize = 0f
@@ -88,17 +92,12 @@ class FTDayAndNightJournalMobile(
 
             calendarMonthTextSize = 11 * screenDensity
             calendarYearTextSize = 20 * screenDensity
-            /* templateDottedLineGap = heightPercent * 2.91f
+            findBoxHeight(maxRows)
+            findBoxWidth(maxColumns, pageTopPadding)
+            calendarMonthTextTopMargins = 1.104f*heightPercent
+            calendarMonthTextLeftMargins = 1.858f* widthPercent
+            /*templateDottedLineGap = heightPercent * 2.91f*/
 
-             findBoxWidth(maxColumns, pageTopPadding)
-             findBoxHeight(maxRows)
-             calendarDayTextSize = 10 * screenDensity
-             calendarMonthTextSize = 15 * screenDensity
-             calendarYearTextSize = 40 * screenDensity
-             dayLeftMargin = widthPercent * 3f
-             dayTopMargin = heightPercent * 1.94f
-             individualDayinCalendar = calendarBoxWidth / 7
-             dairyTextSize = heightPercent * 1.66f*/
         }
 
     private fun createIntroPage() {
@@ -177,8 +176,8 @@ class FTDayAndNightJournalMobile(
         FTDairyTextPaints.calendar_Year_Paint.textSize = calendarYearTextSize
         FTDairyTextPaints.calendar_Month_Paint.textSize = calendarMonthTextSize
 
-        canvas.drawText("2021",
-//            getYearHeading(calendarYear.startMonth),
+        canvas.drawText(
+            Utils.getYearHeading(calendarYear.startMonth),
             pageLeftPadding,
             pageTopPadding + calendarYearTextSize,
             FTDairyTextPaints.calendar_Year_Paint
@@ -189,7 +188,7 @@ class FTDayAndNightJournalMobile(
         var boxRight: Float
         var boxBottom = boxTop + calendarBoxHeight
         var month_Of_Year = 0
-//        val yearRectInfoList = FTDairyYearPageRect.yearRectInfo
+
         FTDairyYearPageRect.yearRectInfo = ArrayList()
 
         for (rows in 1..maxRows) {
@@ -208,50 +207,11 @@ class FTDayAndNightJournalMobile(
                 val r = RectF(boxLeft, boxTop, boxRight, boxBottom)
                 canvas.drawRoundRect(r, 10f, 10f, FTDairyTextPaints.coloredBoxPaint)
 
-                /*   //show Week Day Names
-                   showWeekDays(months, month_Of_Year, boxLeft, dateTopSpace)
-                   for (days in 0 until months[month_Of_Year].dayInfos.size) {
-                       if (days % 7 == 0) {
-                           dateTopSpace += dayTopMargin
-                           dateLeftSpace = boxLeft
-                       }
-                       val date =
-                           if (months[month_Of_Year].dayInfos[days].belongsToSameMonth) months[month_Of_Year].dayInfos[days].dayString else ""
-                       val xPosition = dateLeftSpace + individualDayinCalendar / 2
-                       canvas.drawText(
-                           date,
-                           xPosition,
-                           dateTopSpace,
-                           FTDairyTextPaints.calendar_Days_Paint
-                       )
-                       val dayRectLeft = xPosition - (individualDayinCalendar / 2)
-
-                       if (date.isNotEmpty()) {
-                           dayRectInfo = RectF(
-                               dayRectLeft,
-                               dateTopSpace - calendarDayTextSize,
-                               dayRectLeft + individualDayinCalendar - 5,
-                               dateTopSpace
-                           )
-                           monthRectsList.add(dayRectInfo)
-                       }
-
-                       canvas.drawRect(
-                           dayRectLeft,
-                           dateTopSpace - calendarDayTextSize,
-                           dayRectLeft + individualDayinCalendar - 5,
-                           dateTopSpace,
-                           FTDairyTextPaints.coloredDayRectBoxPaint
-                       )
-
-                dateLeftSpace += individualDayinCalendar*/
-
-
                 canvas.drawText(
                     monthName,
-                    boxLeft  ,
-                    boxTop + calendarVerticalSpacing,
-                    FTDairyTextPaints.calendar_Month_Paint
+                    boxLeft+calendarMonthTextLeftMargins,
+                    boxTop + calendarVerticalSpacing+calendarMonthTextTopMargins,
+                    FTDairyTextPaints.calendar_Month_Mobile_Paint
                 )
                 boxLeft = boxRight + calendarHorizontalSpacing
                 boxRight += calendarBoxWidth + calendarHorizontalSpacing
