@@ -69,6 +69,7 @@ class FTDayAndNightJournalMobile(
         quotesList = getQuotesList(context)
         createIntroPage()
         createCalendarPage(months, calendarYear)
+        createMonthsPages(months, calendarYear)
         /*  createTemplate(months) */
         val fos: FileOutputStream
         try {
@@ -94,8 +95,8 @@ class FTDayAndNightJournalMobile(
             calendarYearTextSize = 20 * screenDensity
             findBoxHeight(maxRows)
             findBoxWidth(maxColumns, pageTopPadding)
-            calendarMonthTextTopMargins = 1.104f*heightPercent
-            calendarMonthTextLeftMargins = 1.858f* widthPercent
+            calendarMonthTextTopMargins = 1.104f * heightPercent
+            calendarMonthTextLeftMargins = 1.858f * widthPercent
             /*templateDottedLineGap = heightPercent * 2.91f*/
 
         }
@@ -209,8 +210,8 @@ class FTDayAndNightJournalMobile(
 
                 canvas.drawText(
                     monthName,
-                    boxLeft+calendarMonthTextLeftMargins,
-                    boxTop + calendarVerticalSpacing+calendarMonthTextTopMargins,
+                    boxLeft + calendarMonthTextLeftMargins,
+                    boxTop + calendarVerticalSpacing + calendarMonthTextTopMargins,
                     FTDairyTextPaints.calendar_Month_Mobile_Paint
                 )
                 boxLeft = boxRight + calendarHorizontalSpacing
@@ -220,6 +221,27 @@ class FTDayAndNightJournalMobile(
             }
         }
         document.finishPage(thirdPage)
+    }
+
+
+    private fun createMonthsPages(
+        months: MutableList<FTMonthInfo>,
+        calendarYear: FTYearFormatInfo
+    ) {
+        val monthsPageInfo =
+            PdfDocument.PageInfo.Builder(screenSize.width, screenSize.height, 3).create()
+        val mPage = document.startPage(monthsPageInfo)
+        canvas = mPage.canvas
+        canvas.drawRect(
+            RectF(
+                0f, 0f, screenSize.width.toFloat(), screenSize.height
+                    .toFloat()
+            ), FTDairyTextPaints.background_Paint
+        )
+
+//        canvas.drawText(Utils.getYearHeading())
+
+        document.finishPage(mPage)
     }
 
 
