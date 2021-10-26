@@ -47,8 +47,6 @@ class FTDayAndNightJournal(
     private var quotesList = ArrayList<QuoteItem>()
     private val document = PdfDocument()
 
-    //    var screenDensity = 0.0f
-//    private var orientation: Int = 1
     private var heightPercent: Float = (screenSize.height - STATUS_BAR_HEIGHT) / 100f
     private var widthPercent: Float = screenSize.width / 100f
     private var pageTopPadding = 0f
@@ -92,10 +90,8 @@ class FTDayAndNightJournal(
         calendarYear: FTYearFormatInfo
     ) {
         super.renderYearPage(context, months, calendarYear)
-        /*  screenDensity = context.resources.displayMetrics.density
-          orientation = context.resources.configuration.orientation*/
 
-        var thSize = SizeF(screenSize.width.toFloat(), screenSize.height.toFloat())
+        val thSize = SizeF(screenSize.width.toFloat(), screenSize.height.toFloat())
         val aspectSize: SizeF = ScreenUtils.aspectSize(
             thSize,
             SizeF(800f, 1200f)
@@ -104,7 +100,7 @@ class FTDayAndNightJournal(
         screenDensity = scaleFactor
 
         if (isLandScape) {
-            var mSize = Size(screenSize.height, screenSize.width)
+            val mSize = Size(screenSize.height, screenSize.width)
             screenSize = mSize
             heightPercent = (screenSize.height - STATUS_BAR_HEIGHT) / 100f
             widthPercent = screenSize.width / 100f
@@ -154,8 +150,6 @@ class FTDayAndNightJournal(
             pageTopPadding + calendarYearTextSize,
             FTDairyTextPaints.calendar_Year_Paint
         )
-        /* findBoxHeight(maxRows)
-         findBoxWidth(maxColumns, pageLeftPadding)*/
 
         var boxLeft: Float
         var boxTop = calendarTopManualSpace
@@ -215,10 +209,8 @@ class FTDayAndNightJournal(
                         dateTopSpace,
                         FTDairyTextPaints.coloredDayRectBoxPaint
                     )
-
                     dateLeftSpace += individualDayinCalendar
                 }
-
                 canvas.drawText(
                     monthName,
                     boxLeft + individualDayinCalendar / 2,
@@ -450,12 +442,12 @@ class FTDayAndNightJournal(
                 20
             )
             yPosition = (heightPercent * 1.9f) + quoteTextHeight + pageTopPadding
-            drawCenterText(
+            ScreenUtils.drawCenterText(context,
                 canvas.width.toFloat() - pageLeftPadding * 3,
                 yPosition,
                 canvas,
                 "-" + item.author,
-                18
+                18,screenDensity
             )
         } else {
             drawMultiLineQuote(
@@ -465,7 +457,7 @@ class FTDayAndNightJournal(
                 20
             )
             yPosition = (heightPercent * 15.03f) + quoteTextHeight
-            drawCenterText(xPosition, yPosition, canvas, "-" + item.author, 18)
+            ScreenUtils.drawCenterText(context,xPosition, yPosition, canvas, "-" + item.author, 18,screenDensity)
 
         }
 
@@ -528,28 +520,6 @@ class FTDayAndNightJournal(
         }
     }
 
-    private fun drawCenterText(
-        xPosition: Float,
-        yPosition: Float,
-        canvas: Canvas?,
-        text: String,
-        textSize: Int
-    ) {
-        val rect = Rect()
-        /*
-         * I have had some problems with Canvas.getHeight() if API < 16. That's why I use Canvas.getClipBounds(Rect) instead. (Do not use Canvas.getClipBounds().getHeight() as it allocates memory for a Rect.)
-         * */canvas!!.getClipBounds(rect)
-        val paint = Paint()
-        paint.textAlign = Paint.Align.CENTER
-        /* paint.textSize = dairyTextSize*/
-        paint.textSize = textSize * screenDensity
-        paint.color = Color.GRAY
-        paint.style = Paint.Style.FILL
-        paint.typeface = ResourcesCompat.getFont(context, R.font.lora_italic)
-        paint.getTextBounds(text, 0, text.length, rect)
-        canvas.drawText(text, xPosition, yPosition, paint)
-    }
-
     private fun drawMultiLineText(text: String, dy: Float, isBulletPoint: Boolean) {
         val pointTextSize = (25 * screenDensity)
         val textPaint = TextPaint().apply {
@@ -588,7 +558,6 @@ class FTDayAndNightJournal(
     ) {
         val pointTextSize = (quoteTextSize * screenDensity)
         val textPaint = TextPaint().apply {
-//            letterSpacing = 0.025f
             textSize = pointTextSize
             typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.lora_italic)
             color = Color.GRAY
@@ -614,20 +583,13 @@ class FTDayAndNightJournal(
                 0,
                 text.length,
                 textPaint,
-                dx.toInt() - pageLeftPadding.toInt()
+                dx.toInt() - (pageLeftPadding*2).toInt()
             ).setAlignment(Layout.Alignment.ALIGN_CENTER)
                 .setLineSpacing(0f, 1.25f).build()
             canvas.save()
             canvas.translate(pageLeftPadding, dy)
 
         }
-
-        /*val dx = if (isBulletPoint) {
-            8.125f * widthPercent
-        } else {
-            4.16f * widthPercent
-        }*/
-
         staticLayout.draw(canvas)
         canvas.restore()
         quoteTextHeight = staticLayout.height
@@ -702,10 +664,6 @@ class FTDayAndNightJournal(
                 }
             }
 
-            FTDairyDayPageRect
-            /* pdDocument.save(pdfFile)
-             pdDocument.close()
- */
             val root = Environment.getExternalStorageDirectory().toString()
             val myDir = File("$root/Journal_PDF")
             if (!myDir.exists()) {

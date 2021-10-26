@@ -2,7 +2,7 @@ package com.example.demo.utils
 
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.Paint
+import android.graphics.*
 import android.util.Log
 import android.util.Size
 import android.util.TypedValue
@@ -13,17 +13,36 @@ import com.example.demo.R
 import com.example.demo.generator.models.QuoteItem
 import kotlin.random.Random
 import android.util.SizeF
-import android.graphics.RectF
-
-
-
-
-
-
+import androidx.core.content.res.ResourcesCompat
 
 
 object ScreenUtils {
     var quotesList = ArrayList<QuoteItem>()
+
+    fun drawCenterText(
+        context: Context,
+        xPosition: Float,
+        yPosition: Float,
+        canvas: Canvas?,
+        text: String,
+        textSize: Int,
+        scaleFactor : Float
+    ) {
+        val rect = Rect()
+        /*
+         * I have had some problems with Canvas.getHeight() if API < 16. That's why I use Canvas.getClipBounds(Rect) instead. (Do not use Canvas.getClipBounds().getHeight() as it allocates memory for a Rect.)
+         * */canvas!!.getClipBounds(rect)
+        val paint = Paint()
+        paint.textAlign = Paint.Align.CENTER
+        /* paint.textSize = dairyTextSize*/
+        paint.textSize = textSize *  scaleFactor
+        paint.color = Color.GRAY
+        paint.style = Paint.Style.FILL
+        paint.typeface = ResourcesCompat.getFont(context, R.font.lora_italic)
+        paint.getTextBounds(text, 0, text.length, rect)
+        canvas.drawText(text, xPosition, yPosition, paint)
+    }
+
 
     fun calculateFontSizeByBoundingRect2(
         context: Context,
@@ -68,10 +87,6 @@ object ScreenUtils {
         // Set the text size
         val targetTextSize = Math.min(targetTextSizeVertical, targetTextSizeHorizontal)
         return Math.abs((targetTextSize * (context.resources.displayMetrics.density)).toInt())
-//        return Math.abs(targetTextSizeHorizontal.toInt())
-
-//        return Math.abs((targetTextSizeHorizontal* (context.resources.displayMetrics.density)).toInt())
-//        return convertPxToDp(context, targetTextSize.toInt())
     }
 
 
