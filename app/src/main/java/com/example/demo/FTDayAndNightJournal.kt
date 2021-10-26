@@ -90,10 +90,11 @@ class FTDayAndNightJournal(
     ) {
         super.renderYearPage(context, months, calendarYear)
 
-        val thSize = SizeF(screenSize.width.toFloat(), screenSize.height.toFloat())
+     val thSize = SizeF(screenSize.width.toFloat(), screenSize.height.toFloat())
         val aspectSize: SizeF = ScreenUtils.aspectSize(
             thSize,
             SizeF(800f, 1200f)
+
         )
         val scaleFactor: Float = thSize.getWidth() / aspectSize.width
         screenDensity = scaleFactor
