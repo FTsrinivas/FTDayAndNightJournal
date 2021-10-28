@@ -13,28 +13,43 @@ class FTDairyTextPaints {
         var introQuote_Paint = Paint().apply {
             style = Paint.Style.FILL
             textAlign = Paint.Align.CENTER
-            color = FTApp.getInstance().resources.getColor(R.color.text_color, FTApp.getInstance().theme)
-            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.lora_italic)
+            color = FTApp.getInstance().resources.getColor(
+                R.color.text_color,
+                FTApp.getInstance().theme
+            )
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.lora_italic)
         }
-         var introText_Paint = Paint().apply {
+        var introText_Paint = Paint().apply {
             style = Paint.Style.FILL
             textAlign = Paint.Align.CENTER
-            color = FTApp.getInstance().resources.getColor(R.color.text_color, FTApp.getInstance().theme)
-            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.lora_regular)
+            color = FTApp.getInstance().resources.getColor(
+                R.color.text_color,
+                FTApp.getInstance().theme
+            )
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.lora_regular)
         }
-         var introAuthorText_Paint = Paint().apply {
+        var introAuthorText_Paint = Paint().apply {
             style = Paint.Style.FILL
             textAlign = Paint.Align.CENTER
-            color = FTApp.getInstance().resources.getColor(R.color.text_color, FTApp.getInstance().theme)
-            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.montserrat_regular)
+            color = FTApp.getInstance().resources.getColor(
+                R.color.text_color,
+                FTApp.getInstance().theme
+            )
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.montserrat_regular)
         }
         var background_Paint = Paint().apply {
             style = Paint.Style.FILL
-            color = FTApp.getInstance().resources.getColor(R.color.page_background, FTApp.getInstance().theme)
+            color = FTApp.getInstance().resources.getColor(
+                R.color.page_background,
+                FTApp.getInstance().theme
+            )
         }
         var coloredBoxPaint = Paint().apply {
             style = Paint.Style.FILL
-            color = FTApp.getInstance().resources.getColor(R.color.box_background, FTApp.getInstance().theme)
+            color = FTApp.getInstance().resources.getColor(
+                R.color.box_background,
+                FTApp.getInstance().theme
+            )
         }
         var coloredDayRectBoxPaint = Paint().apply {
             style = Paint.Style.FILL
@@ -43,35 +58,62 @@ class FTDairyTextPaints {
         var calendar_Year_Paint = Paint().apply {
             isAntiAlias = true
             color = Color.GRAY
-            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.lora_regular)
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.lora_regular)
+        }
+        var calendarColorText_Paint = Paint().apply {
+            isAntiAlias = true
+            color = FTApp.getInstance().resources.getColor(
+                R.color.day_text_color,
+                FTApp.getInstance().theme
+            )
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.lora_regular)
         }
         var calendar_Month_Paint = Paint().apply {
             isAntiAlias = true
             color = Color.GRAY
-            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.montserrat_bold)
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.montserrat_bold)
         }
         var calendar_Month_Mobile_Paint = Paint().apply {
             isAntiAlias = true
-            color = Color.GRAY
-            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.montserrat_bold)
+            color = FTApp.getInstance().resources.getColor(
+                R.color.day_text_color,
+                FTApp.getInstance().theme
+            )
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.montserrat_bold)
         }
         var calendar_WeekDays_Paint = Paint().apply {
             isAntiAlias = true
             textAlign = Paint.Align.CENTER
             color = Color.GRAY
-            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.montserrat_bold)
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.montserrat_bold)
             typeface.isBold
         }
         var calendar_Days_Paint = Paint().apply {
             isAntiAlias = true
             textAlign = Paint.Align.CENTER
-            color = FTApp.getInstance().resources.getColor(R.color.day_text_color, FTApp.getInstance().theme)
-            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.montserrat_bold)
+            color = FTApp.getInstance().resources.getColor(
+                R.color.day_text_color,
+                FTApp.getInstance().theme
+            )
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.montserrat_bold)
         }
         var dairyText_Paint = Paint().apply {
             isAntiAlias = true
-            color = FTApp.getInstance().resources.getColor(R.color.text_color, FTApp.getInstance().theme)
-            typeface = ResourcesCompat.getFont(FTApp.getInstance(),R.font.lora_regular)
+            color = FTApp.getInstance().resources.getColor(
+                R.color.text_color,
+                FTApp.getInstance().theme
+            )
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.lora_regular)
+        }
+        var dayPageQuoteAndAutorTextPaint = Paint().apply {
+            isAntiAlias = true
+            textAlign = Paint.Align.CENTER
+            color = FTApp.getInstance().resources.getColor(
+                R.color.text_color,
+                FTApp.getInstance().theme
+            )
+            style = Paint.Style.FILL
+            typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.lora_italic)
         }
     }
 }

@@ -1,17 +1,12 @@
 package com.example.demo
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.*
 import android.graphics.pdf.PdfDocument
 import android.text.StaticLayout
 import android.text.TextPaint
-import android.util.Log
 import android.util.Size
 import androidx.core.content.res.ResourcesCompat
-import com.dd.plist.NSArray
-import com.dd.plist.NSDictionary
-import com.dd.plist.PropertyListParser
 import com.example.demo.generator.FTDiaryFormat
 import com.example.demo.generator.models.QuoteItem
 import com.example.demo.generator.models.info.FTMonthInfo
@@ -32,12 +27,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.lang.Exception
 import java.util.*
-import kotlin.random.Random
 import android.os.Environment
 import android.text.Layout
 import kotlin.collections.ArrayList
 
-import android.util.TypedValue
 import com.example.demo.utils.ScreenUtils
 import com.example.demo.utils.Utils
 
@@ -46,8 +39,7 @@ class FTDayAndNightJournal(
     private val context: Context,
     private var screenSize: Size,
     private val isLandScape: Boolean,
-    private val screenDensity: Float
-) : FTDiaryFormat(context, screenSize, isLandScape, screenDensity) {
+) : FTDiaryFormat(context, screenSize, isLandScape) {
 
     private var quotesList = ArrayList<QuoteItem>()
     private val document = PdfDocument()
@@ -107,7 +99,7 @@ class FTDayAndNightJournal(
         quotesList = ScreenUtils.getQuotesList(context)
         createIntroPage()
         createCalendarPage(months, calendarYear)
-        createTemplate(months)
+        createDayPageTemplate(months)
 
         val fos: FileOutputStream
         try {
@@ -336,7 +328,7 @@ class FTDayAndNightJournal(
         }
     }
 
-    private fun createTemplate(months: List<FTMonthInfo>) {
+    private fun createDayPageTemplate(months: List<FTMonthInfo>) {
         var pageNumber = 3
         FTDairyDayPageRect.yearPageRect = Rect(
             (27.25 * widthPercent).toInt(),
@@ -557,14 +549,11 @@ class FTDayAndNightJournal(
     ) {
         val pointTextSize = (quoteTextSize * screenDensity)
         val textPaint = TextPaint().apply {
-//            letterSpacing = 0.025f
             textSize = pointTextSize
             typeface = ResourcesCompat.getFont(FTApp.getInstance(), R.font.lora_italic)
             color = Color.GRAY
             textAlign = Paint.Align.LEFT
         }
-        val textWidth = screenSize.width - (12.625f * widthPercent)
-
         var staticLayout: StaticLayout? = null
         if (isLandScape) {
             staticLayout = StaticLayout.Builder.obtain(
@@ -586,15 +575,8 @@ class FTDayAndNightJournal(
                 .setLineSpacing(0f, 1.25f).build()
 
         }
-
         canvas.save()
-        /*val dx = if (isBulletPoint) {
-            8.125f * widthPercent
-        } else {
-            4.16f * widthPercent
-        }*/
-
-        canvas.translate(pageLeftPadding, dy)
+        canvas.translate(pageLeftPadding, dy-pageLeftPadding)
         staticLayout.draw(canvas)
         canvas.restore()
         quoteTextHeight = staticLayout.height
@@ -633,9 +615,9 @@ class FTDayAndNightJournal(
 
     private fun createPageHyperLinks() {
         try {
-            var pdfFilePath: String = context.getFilesDir().toString() + "/" + "demo.pdf"
-            var pdfFile = File(pdfFilePath)
-            var pdDocument: PDDocument = PDDocument.load(pdfFile)
+            val pdfFilePath: String = context.getFilesDir().toString() + "/" + "demo.pdf"
+            val pdfFile = File(pdfFilePath)
+            val pdDocument: PDDocument = PDDocument.load(pdfFile)
             var pdPage = PDPage()
             var pageIndex = 1
             var yearPage = pdDocument.getPage(pageIndex)
